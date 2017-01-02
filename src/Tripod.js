@@ -2,27 +2,42 @@
 import _ from 'underscore';
 import Victor from 'Victor';
 
-export const create = (p1, p2, p3) => {
+const State = {
+  MOVING: 'MOVING',
+  GROWING: 'GROWING',
+  THINKING: 'THINKING'
+};
+
+export const create = (leg1, leg2, leg3) => {
   return {
-    p1, p2, p3
+    leg1, leg2, leg3,
+    state: State.THINKING
   };
 };
 
-export const centre = ({p1, p2, p3}) => {
+export const legs = ({leg1, leg2, leg3}) => {
+  return {
+    leg1, leg2, leg3
+  };
+};
+
+export const centre = ({leg1, leg2, leg3}) => {
   return Victor(
-    (p1.x + p2.x + p3.x) / 3,
-    (p1.y + p2.y + p3.y) / 3
+    (leg1.x + leg2.x + leg3.x) / 3,
+    (leg1.y + leg2.y + leg3.y) / 3
   );
 };
 
-export const area = ({p1, p2, p3}) => {
+export const area = ({leg1, leg2, leg3}) => {
   return Math.abs(
-    (p1.x * (p2.y - p3.y)) + (p2.x * (p3.y - p1.y)) + (p3.x * (p1.y - p2.y))
+    (leg1.x * (leg2.y - leg3.y)) +
+    (leg2.x * (leg3.y - leg1.y)) +
+    (leg3.x * (leg1.y - leg2.y))
   ) / 2;
 };
 
 export const movePoint = (tripod, target) => {
-  return _.chain(tripod).map(
+  return _.chain(legs(tripod)).map(
     (p, name) => {
       return {name, distance: p.distance(target)};
     }

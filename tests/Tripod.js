@@ -7,6 +7,24 @@ import assert from 'assert';
 
 describe('Tripod', () => {
 
+  it('retrieves the legs', () => {
+    const l1 = Victor(1, 1);
+    const l2 = Victor(1, 4);
+    const l3 = Victor(4, 1);
+    const t = Tripod.create(l1, l2, l3);
+    const result = Tripod.legs(t);
+
+    assert.equal(result.leg1.x, l1.x, `Leg1 X value should be ${l1.x}, not ${result.leg1.x}`);
+    assert.equal(result.leg1.y, l1.y, `Leg1 Y value should be ${l1.y}, not ${result.leg1.y}`);
+
+    assert.equal(result.leg2.x, l2.x, `Leg2 X value should be ${l2.x}, not ${result.leg2.x}`);
+    assert.equal(result.leg2.y, l2.y, `leg2 Y value should be ${l2.y}, not ${result.leg2.y}`);
+
+    assert.equal(result.leg3.x, l3.x, `Leg3 X value should be ${l3.x}, not ${result.leg3.x}`);
+    assert.equal(result.leg3.y, l3.y, `Leg3 Y value should be ${l3.y}, not ${result.leg3.y}`);
+
+  });
+
   it('finds the centre', () => {
     const t = Tripod.create(
       Victor(1, 1),
@@ -39,7 +57,7 @@ describe('Tripod', () => {
       Victor(3, 0)
     );
     const target = Victor(3, 3);
-    const expected = 'p1';
+    const expected = 'leg1';
     const result = Tripod.movePoint(t, target);
 
     assert.equal(result, expected, `Move point should be ${expected}, not ${result}`);
