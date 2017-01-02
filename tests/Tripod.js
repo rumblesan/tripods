@@ -9,11 +9,11 @@ describe('Tripod', () => {
 
   it('finds the centre', () => {
     const t = Tripod.create(
-      new Victor(1, 1),
-      new Victor(1, 4),
-      new Victor(4, 1)
+      Victor(1, 1),
+      Victor(1, 4),
+      Victor(4, 1)
     );
-    const expected = new Victor(2, 2);
+    const expected = Victor(2, 2);
     const result = Tripod.centre(t);
 
     assert.equal(result.x, expected.x, `X value should be ${expected.x}`);
@@ -22,9 +22,9 @@ describe('Tripod', () => {
 
   it('calculates the area', () => {
     const t = Tripod.create(
-      new Victor(1, 1),
-      new Victor(1, 4),
-      new Victor(4, 1)
+      Victor(1, 1),
+      Victor(1, 4),
+      Victor(4, 1)
     );
     const expected = 4.5;
     const result = Tripod.area(t);
