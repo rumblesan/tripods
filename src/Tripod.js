@@ -22,18 +22,21 @@ export const area = ({p1, p2, p3}) => {
 };
 
 export const movePoint = (tripod, target) => {
-
-  const {name} = _.chain(tripod).map(
+  return _.chain(tripod).map(
     (p, name) => {
       return {name, distance: p.distance(target)};
     }
   ).max(
     ({distance}) => distance
-  ).value();
+  ).value().name;
+};
+
+export const newPoint = (tripod, target) => {
+  const movePointName = movePoint(tripod, target);
 
   const pC = centre(tripod);
 
-  const movePoint = tripod[name];
+  const movePoint = tripod[movePointName];
   const moveDistance = movePoint.distance(pC) * 4;
 
   const newPoint = pC.subtract(movePoint).normalize().multiply(moveDistance).add(movePoint);
