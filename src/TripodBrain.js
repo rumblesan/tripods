@@ -99,8 +99,8 @@ export const grow = (tripod) => {
     Tripod.legs(tripod),
     (leg) => leg.position.distance(tC)
   ).name;
-  const growth = Tripod.getLeg(growLeg, tripod).clone().subtract(tC).normalize().multiply(Victor(5, 5));
-  Tripod.getLeg(growLeg, tripod).add(growth);
+  const growth = Tripod.getLeg(tripod, growLeg).clone().subtract(tC).normalize().multiply(Victor(5, 5));
+  Tripod.getLeg(tripod, growLeg).add(growth);
   return States.THINKING;
 };
 
