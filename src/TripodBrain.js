@@ -36,7 +36,7 @@ export const startMoving = (tripod) => {
   const moveDistance = movingLeg.distance(tC) * 4;
   const legTarget = direction.clone().multiply(Victor(moveDistance, moveDistance)).add(movingLeg);
 
-  tripod.stateData = {
+  tripod.steppingState = {
     movingLegName: movingLegName,
     target: legTarget,
     stepsTaken: 0,
@@ -45,16 +45,16 @@ export const startMoving = (tripod) => {
 };
 
 export const move = (tripod) => {
-  const target = tripod.stateData.target;
-  const movingLeg = tripod[tripod.stateData.movingLegName];
-  tripod.stateData.stepsTaken += 1;
-  if (tripod.stateData.stepsTaken >= tripod.stateData.stepsInMovement) {
+  const target = tripod.steppingState.target;
+  const movingLeg = tripod[tripod.steppingState.movingLegName];
+  tripod.steppingState.stepsTaken += 1;
+  if (tripod.steppingState.stepsTaken >= tripod.steppingState.stepsInMovement) {
     movingLeg.copy(target);
     return States.THINKING;
   }
   // Steps still to take
   const distance = target.distance(movingLeg);
-  const step = (distance / tripod.stateData.stepsInMovement);
+  const step = (distance / tripod.steppingState.stepsInMovement);
   const dirVector = target.clone().subtract(movingLeg).normalize().multiply(Victor(step, step));
   movingLeg.add(dirVector);
   return States.MOVING;
@@ -65,7 +65,7 @@ export const move = (tripod) => {
  */
 
 export const startThinking = (tripod) => {
-  tripod.stateData = {};
+  tripod.steppingState = {};
 };
 
 export const think = (tripod) => {
@@ -91,7 +91,7 @@ export const think = (tripod) => {
  */
 
 export const startGrowing = (tripod) => {
-  tripod.stateData = {};
+  tripod.steppingState = {};
 };
 
 export const grow = (tripod) => {
@@ -110,7 +110,7 @@ export const grow = (tripod) => {
  */
 
 export const startShrinking = (tripod) => {
-  tripod.stateData = {};
+  tripod.steppingState = {};
 };
 
 export const shrink = (tripod) => {

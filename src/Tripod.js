@@ -19,7 +19,7 @@ export const create = (leg1, leg2, leg3) => {
   return {
     leg1, leg2, leg3,
     initialSize: startArea,
-    stateData: {},
+    steppingState: {},
     target: null,
     targetReached: null,
     stateMachine
