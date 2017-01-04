@@ -76,7 +76,7 @@ export const think = (tripod) => {
     return States.GROWING;
   } else if (Tripod.area(tripod) > (tripod.initialSize * 2)) {
     return States.SHRINKING;
-  } else if (Tripod.centre(tripod).distance(tripod.target) > 10) {
+  } else if (!Tripod.contains(tripod, tripod.target)) {
     return States.MOVING;
   } else {
     tripod.target = null;
