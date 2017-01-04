@@ -73,10 +73,10 @@ export const startMoving = (tripod) => {
 
   const direction = tC.clone().subtract(movingLeg).normalize();
   const moveDistance = movingLeg.distance(tC) * 4;
-  const legTarget = direction.clone().multiply(moveDistance).add(movingLeg);
+  const legTarget = direction.clone().multiply(Victor(moveDistance, moveDistance)).add(movingLeg);
 
   tripod.stateData = {
-    movingLeg: movingLegName,
+    movingLegName: movingLegName,
     target: legTarget,
     stepsTaken: 0,
     stepsInMovement: 10
@@ -84,17 +84,17 @@ export const startMoving = (tripod) => {
 };
 
 export const move = (tripod) => {
+  const target = tripod.stateData.target;
+  const movingLeg = tripod[tripod.stateData.movingLegName];
   tripod.stateData.stepsTaken += 1;
   if (tripod.stateData.stepsTaken >= tripod.stateData.stepsInMovement) {
     movingLeg.copy(target);
     return States.THINKING;
   }
   // Steps still to take
-  const movingLeg = tripod[tripod.stateData.movingLeg];
-  const target = tripod.stateData.target;
   const distance = target.distance(movingLeg);
   const step = (distance / tripod.stateData.stepsInMovement);
-  const dirVector = target.clone().subtract(movingLeg).normalize().multiply(step);
+  const dirVector = target.clone().subtract(movingLeg).normalize().multiply(Victor(step, step));
   movingLeg.add(dirVector);
   return States.MOVING;
 };
@@ -108,6 +108,9 @@ export const startThinking = (tripod) => {
 };
 
 export const think = (tripod) => {
+  if (tripod.target === null) {
+    return States.THINKING;
+  }
   if (centre(tripod).distance(tripod.target) > 10) {
     return States.MOVING;
   } else {
@@ -133,10 +136,10 @@ export const grow = () => {
  */
 
 export const live = (tripod) => {
-  StateMachine.run(tripod.sm, tripod);
+  StateMachine.run(tripod.stateMachine, tripod);
 };
 
 export const newTarget = (tripod, target) => {
   tripod.target = target;
-  StateMachine.change(tripod.sm, States.MOVING, tripod);
+  StateMachine.change(tripod.stateMachine, States.MOVING, tripod);
 };
