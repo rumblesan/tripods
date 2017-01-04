@@ -2,25 +2,38 @@
 import _ from 'underscore';
 import Victor from 'Victor';
 
-const State = {
+import * as StateMachine from './StateMachine';
+
+const States = {
+  THINKING: 'THINKING',
   MOVING: 'MOVING',
-  GROWING: 'GROWING',
-  THINKING: 'THINKING'
+  GROWING: 'GROWING'
 };
-const ERROR = 'ERROR';
 
 export const create = (leg1, leg2, leg3) => {
+
+  const stateMachine = StateMachine.create(_.values(States));
+  StateMachine.registerStateFunction(stateMachine, States.THINKING, think);
+  StateMachine.registerStateFunction(stateMachine, States.MOVING, move);
+  StateMachine.registerStateFunction(stateMachine, States.GROWING, grow);
+  StateMachine.registerTransitionFunction(stateMachine, States.THINKING, startThinking);
+  StateMachine.registerTransitionFunction(stateMachine, States.MOVING, startMoving);
+  StateMachine.registerTransitionFunction(stateMachine, States.GROWING, startGrowing);
+
   return {
     leg1, leg2, leg3,
-    state: State.THINKING,
-    stateData: {}
+    stateData: {},
+    target: null,
+    stateMachine
   };
 };
 
 export const legs = ({leg1, leg2, leg3}) => {
-  return {
-    leg1, leg2, leg3
-  };
+  return [
+    {name: 'leg1', position: leg1},
+    {name: 'leg2', position: leg2},
+    {name: 'leg3', position: leg3},
+  ];
 };
 
 export const centre = ({leg1, leg2, leg3}) => {
@@ -42,18 +55,19 @@ export const area = ({leg1, leg2, leg3}) => {
 /**
    Moving state functions
  */
-export const movingLeg = (tripod, target) => {
-  return _.chain(legs(tripod)).map(
-    (p, name) => {
-      return {name, distance: p.distance(target)};
-    }
-  ).max(
-    ({distance}) => distance
-  ).value().name;
+
+export const farthestLeg = (tripod, target) => {
+  return _.max(
+    legs(tripod),
+    (leg) => leg.position.distance(target)
+  ).name;
 };
 
-export const startMoving = (tripod, target) => {
-  const movingLegName = movingLeg(tripod, target);
+export const startMoving = (tripod) => {
+  if (tripod.target === null) {
+    return StateMachine.ERROR;
+  }
+  const movingLegName = farthestLeg(tripod, tripod.target);
   const movingLeg = tripod[movingLegName];
   const tC = centre(tripod);
 
@@ -61,7 +75,6 @@ export const startMoving = (tripod, target) => {
   const moveDistance = movingLeg.distance(tC) * 4;
   const legTarget = direction.clone().multiply(moveDistance).add(movingLeg);
 
-  tripod.state = State.MOVING;
   tripod.stateData = {
     movingLeg: movingLegName,
     target: legTarget,
@@ -71,15 +84,10 @@ export const startMoving = (tripod, target) => {
 };
 
 export const move = (tripod) => {
-  if (tripod.state !== State.MOVING) {
-    console.log(`Shouldn't be moving in ${tripod.state} state`);
-    return ERROR;
-  }
-
   tripod.stateData.stepsTaken += 1;
   if (tripod.stateData.stepsTaken >= tripod.stateData.stepsInMovement) {
     movingLeg.copy(target);
-    return State.THINKING;
+    return States.THINKING;
   }
   // Steps still to take
   const movingLeg = tripod[tripod.stateData.movingLeg];
@@ -88,7 +96,7 @@ export const move = (tripod) => {
   const step = (distance / tripod.stateData.stepsInMovement);
   const dirVector = target.clone().subtract(movingLeg).normalize().multiply(step);
   movingLeg.add(dirVector);
-  return State.MOVING;
+  return States.MOVING;
 };
 
 /**
@@ -96,12 +104,16 @@ export const move = (tripod) => {
  */
 
 export const startThinking = (tripod) => {
-  tripod.state = State.THINKING;
   tripod.stateData = {};
 };
 
 export const think = (tripod) => {
-  return tripod.state;
+  if (centre(tripod).distance(tripod.target) > 10) {
+    return States.MOVING;
+  } else {
+    tripod.target = null;
+    return States.THINKING;
+  }
 };
 
 /**
@@ -109,54 +121,22 @@ export const think = (tripod) => {
  */
 
 export const startGrowing = (tripod) => {
-  tripod.state = State.GROWING;
   tripod.stateData = {};
 };
 
 export const grow = () => {
-  return State.THINKING;
+  return States.THINKING;
 };
 
 /**
-   State Machine functions
+   Interaction functions
  */
+
 export const live = (tripod) => {
-  switch (tripod.state) {
-  case State.MOVING:
-    handleState(move(tripod));
-    break;
-  case State.GROWING:
-    handleState(grow(tripod));
-    break;
-  case State.THINKING:
-    handleState(think(tripod));
-    break;
-  default:
-    handleState(think(tripod));
-    break;
-  }
+  StateMachine.run(tripod.sm, tripod);
 };
 
-export const handleState = (tripod, newState) => {
-  if (newState === tripod.state) {
-    // no state change
-    return;
-  }
-  switch (tripod.state) {
-  case State.MOVING:
-    startMoving(tripod);
-    break;
-  case State.GROWING:
-    startGrowing(tripod);
-    break;
-  case State.THINKING:
-    startThinking(tripod);
-    break;
-  default:
-    if (newState === ERROR) {
-      // Handle error
-    }
-    startThinking(tripod);
-    break;
-  }
+export const newTarget = (tripod, target) => {
+  tripod.target = target;
+  StateMachine.change(tripod.sm, States.MOVING, tripod);
 };

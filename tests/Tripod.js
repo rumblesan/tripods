@@ -14,14 +14,17 @@ describe('Tripod', () => {
     const t = Tripod.create(l1, l2, l3);
     const result = Tripod.legs(t);
 
-    assert.equal(result.leg1.x, l1.x, `Leg1 X value should be ${l1.x}, not ${result.leg1.x}`);
-    assert.equal(result.leg1.y, l1.y, `Leg1 Y value should be ${l1.y}, not ${result.leg1.y}`);
+    assert.equal(result[0].position.x, l1.x, `Leg1 X value should be ${l1.x}, not ${result[0].position.x}`);
+    assert.equal(result[0].position.y, l1.y, `Leg1 Y value should be ${l1.y}, not ${result[0].position.y}`);
+    assert.equal(result[0].name, 'leg1', `Leg1 name should be 'leg1', not ${result[0].name}`);
 
-    assert.equal(result.leg2.x, l2.x, `Leg2 X value should be ${l2.x}, not ${result.leg2.x}`);
-    assert.equal(result.leg2.y, l2.y, `leg2 Y value should be ${l2.y}, not ${result.leg2.y}`);
+    assert.equal(result[1].position.x, l2.x, `Leg2 X value should be ${l2.x}, not ${result[1].position.x}`);
+    assert.equal(result[1].position.y, l2.y, `Leg2 Y value should be ${l2.y}, not ${result[1].position.y}`);
+    assert.equal(result[1].name, 'leg2', `Leg2 name should be 'leg2', not ${result[1].name}`);
 
-    assert.equal(result.leg3.x, l3.x, `Leg3 X value should be ${l3.x}, not ${result.leg3.x}`);
-    assert.equal(result.leg3.y, l3.y, `Leg3 Y value should be ${l3.y}, not ${result.leg3.y}`);
+    assert.equal(result[2].position.x, l3.x, `Leg3 X value should be ${l3.x}, not ${result[2].position.x}`);
+    assert.equal(result[2].position.y, l3.y, `Leg3 Y value should be ${l3.y}, not ${result[2].position.y}`);
+    assert.equal(result[2].name, 'leg3', `Leg3 name should be 'leg3', not ${result[2].name}`);
 
   });
 
@@ -50,7 +53,7 @@ describe('Tripod', () => {
     assert.equal(result, expected, `Area should be ${expected}, not ${result}`);
   });
 
-  it('calculates the point to move', () => {
+  it('calculates the leg to move', () => {
     const t = Tripod.create(
       Victor(0, 0),
       Victor(0, 3),
@@ -58,8 +61,8 @@ describe('Tripod', () => {
     );
     const target = Victor(3, 3);
     const expected = 'leg1';
-    const result = Tripod.movePoint(t, target);
+    const result = Tripod.farthestLeg(t, target);
 
-    assert.equal(result, expected, `Move point should be ${expected}, not ${result}`);
+    assert.equal(result, expected, `Farthest leg should be ${expected}, not ${result}`);
   });
 });
