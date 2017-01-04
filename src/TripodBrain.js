@@ -79,6 +79,8 @@ export const think = (tripod) => {
   } else if (!Tripod.contains(tripod, tripod.target)) {
     return States.MOVING;
   } else {
+    tripod.targetReached();
+    tripod.targetReached = null;
     tripod.target = null;
     return States.THINKING;
   }

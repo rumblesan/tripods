@@ -21,6 +21,7 @@ export const create = (leg1, leg2, leg3) => {
     initialSize: startArea,
     stateData: {},
     target: null,
+    targetReached: null,
     stateMachine
   };
 };
@@ -86,7 +87,8 @@ export const live = (tripod) => {
   StateMachine.run(tripod.stateMachine, tripod);
 };
 
-export const newTarget = (tripod, target) => {
+export const newTarget = (tripod, target, callback) => {
   tripod.target = target;
+  tripod.targetReached = callback;
   StateMachine.change(tripod.stateMachine, Brain.States.MOVING, tripod);
 };
