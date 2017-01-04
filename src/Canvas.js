@@ -10,8 +10,9 @@ export const create = (canvasElement) => {
 };
 
 export const drawSquare = (canvas, position, size, colour) => {
+  const offset = size / 2;
   canvas.context.fillStyle = colour;
-  canvas.context.fillRect(position.x, position.y, size, size);
+  canvas.context.fillRect(position.x - offset, position.y - offset, size, size);
   return canvas;
 };
 
@@ -25,7 +26,6 @@ export const drawLine = (canvas, start, end, colour) => {
 };
 
 export const drawBackground = (canvas, colour) => {
-  console.log(canvas);
   canvas.context.fillStyle = colour;
   canvas.context.fillRect(0, 0, canvas.element.width, canvas.element.height);
   return canvas;
