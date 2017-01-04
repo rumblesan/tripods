@@ -66,4 +66,17 @@ describe('Tripod', () => {
 
     assert.equal(result, expected, `Farthest leg should be ${expected}, not ${result}`);
   });
+
+  it('correctly finds if a point is inside the tripod base', () => {
+    const t = Tripod.create(
+      Victor(0, 0),
+      Victor(0, 3),
+      Victor(3, 0)
+    );
+    const point1 = Victor(1, 1);
+    const point2 = Victor(0, -1);
+
+    assert(Tripod.contains(t, point1), 'Tripod should contain point1');
+    assert(!Tripod.contains(t, point2), 'Tripod should not contain point1');
+  });
 });
