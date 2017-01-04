@@ -13,14 +13,24 @@ import _ from 'underscore';
 
 export const ERROR = 'STATEMACHINEERROR';
 
-export const create = (states) => {
+export const create = (states, debug) => {
   return {
     defaultState: states[0],
     currentState: states[0],
     states,
     stateFunction: {},
     transitionFunction: {},
+    debug: debug || false
   };
+};
+
+const log = (sm, message) => {
+  if (!sm.debug) return;
+  if (message) {
+    console.log(`State Machine - ${sm.currentState}: ${message}`);
+  } else {
+    console.log(`State Machine - ${sm.currentState}`);
+  }
 };
 
 export const registerStateFunction = (sm, state, func) => {
@@ -43,6 +53,7 @@ export const run = (sm, userData) => {
   if (!_.contains(sm.states, sm.currentState)) {
     return false;
   }
+  log(sm);
   if (sm.stateFunction[sm.currentState]) {
     const newState = sm.stateFunction[sm.currentState](userData);
     change(sm, newState, userData);
@@ -51,9 +62,10 @@ export const run = (sm, userData) => {
 
 export const change = (sm, newState, userData) => {
   if (newState === ERROR) {
-    console.log('State machine error');
+    log(sm, 'ERROR');
     sm.currentState = sm.defaultState;
   } else if (newState !== sm.currentState) {
+    log(sm, `-> ${newState}`);
     sm.currentState = newState;
     if (sm.transitionFunction[sm.currentState]) {
       sm.transitionFunction[sm.currentState](userData);
