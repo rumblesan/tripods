@@ -12,7 +12,6 @@ export const create = (leg1, leg2, leg3) => {
   StateMachine.registerStateFunction(stateMachine, Brain.States.MOVING, Brain.move);
   StateMachine.registerStateFunction(stateMachine, Brain.States.GROWING, Brain.grow);
   StateMachine.registerStateFunction(stateMachine, Brain.States.SHRINKING, Brain.shrink);
-  StateMachine.registerTransitionFunction(stateMachine, Brain.States.THINKING, Brain.startThinking);
   StateMachine.registerTransitionFunction(stateMachine, Brain.States.MOVING, Brain.startMoving);
 
   const startArea = area({leg1, leg2, leg3});

@@ -49,6 +49,7 @@ export const startMoving = (tripod) => {
 export const move = (tripod) => {
   tripod.steppingState.stepsTaken -= 1;
   if (tripod.steppingState.stepsTaken <= 0) {
+    tripod.steppingState = {};
     return States.THINKING;
   }
   const movingLeg = tripod[tripod.steppingState.movingLegName];
@@ -59,10 +60,6 @@ export const move = (tripod) => {
 /**
    Thinking state functions
  */
-
-export const startThinking = (tripod) => {
-  tripod.steppingState = {};
-};
 
 export const think = (tripod) => {
   if (tripod.target === null) {
@@ -86,10 +83,6 @@ export const think = (tripod) => {
    Growing state functions
  */
 
-export const startGrowing = (tripod) => {
-  tripod.steppingState = {};
-};
-
 export const grow = (tripod) => {
   const tC = Tripod.centre(tripod);
   const growLeg = _.min(
@@ -104,10 +97,6 @@ export const grow = (tripod) => {
 /**
    Shrinking state functions
  */
-
-export const startShrinking = (tripod) => {
-  tripod.steppingState = {};
-};
 
 export const shrink = (tripod) => {
   const tC = Tripod.centre(tripod);
