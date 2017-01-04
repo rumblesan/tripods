@@ -19,6 +19,10 @@ const drawTripod = (canvas, {leg1, leg2, leg3}) => {
   Canvas.drawLine(canvas, leg3, leg1, 'white');
 };
 
+const drawTarget = (canvas, target) => {
+  Canvas.drawSquare(canvas, target, 10, 'red');
+};
+
 const init = () => {
   console.log('init');
 
@@ -33,7 +37,8 @@ const init = () => {
 
   const world = {
     canvas,
-    tripod
+    tripod,
+    target: null
   };
 
   canvasEl.onclick = (e) => {
@@ -46,15 +51,19 @@ const init = () => {
 const draw = (world) => {
   Tripod.live(world.tripod);
   Canvas.drawBackground(world.canvas, 'black');
+  if (world.target) {
+    drawTarget(world.canvas, world.target);
+  }
   drawTripod(world.canvas, world.tripod);
 
   requestAnimationFrame(() => draw(world));
 };
 
 const onClick = (e, world) => {
-  const newTarget = Victor(e.clientX, e.clientY);
-  console.log(newTarget);
-  Tripod.newTarget(world.tripod, newTarget);
+  world.target = Victor(e.clientX, e.clientY);
+  Tripod.newTarget(world.tripod, world.target, () => {
+    world.target = null;
+  });
 };
 
 init();
