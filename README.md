@@ -1,6 +1,6 @@
 # Tripods
 
-An expriment
+An experiment
 
 
 ## Description
