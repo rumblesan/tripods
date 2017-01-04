@@ -28,34 +28,31 @@ export const startMoving = (tripod) => {
   if (tripod.target === null) {
     return StateMachine.ERROR;
   }
+
   const movingLegName = Tripod.farthestLeg(tripod, tripod.target);
   const movingLeg = tripod[movingLegName];
   const tC = Tripod.centre(tripod);
 
   const direction = tC.clone().subtract(movingLeg).normalize();
   const moveDistance = movingLeg.distance(tC) * 4;
-  const legTarget = direction.clone().multiply(Victor(moveDistance, moveDistance)).add(movingLeg);
+
+  const stepDistance = moveDistance / tripod.config.moveSteps;
+  const stepDelta = direction.multiply(Victor(stepDistance, stepDistance));
 
   tripod.steppingState = {
     movingLegName: movingLegName,
-    target: legTarget,
-    stepsTaken: 0,
-    stepsInMovement: 10
+    stepDelta,
+    stepsTaken: tripod.config.moveSteps
   };
 };
 
 export const move = (tripod) => {
-  const target = tripod.steppingState.target;
-  const movingLeg = tripod[tripod.steppingState.movingLegName];
-  tripod.steppingState.stepsTaken += 1;
-  if (tripod.steppingState.stepsTaken >= tripod.steppingState.stepsInMovement) {
+  tripod.steppingState.stepsTaken -= 1;
+  if (tripod.steppingState.stepsTaken <= 0) {
     return States.THINKING;
   }
-  // Steps still to take
-  const distance = target.distance(movingLeg);
-  const step = (distance / tripod.steppingState.stepsInMovement);
-  const dirVector = target.clone().subtract(movingLeg).normalize().multiply(Victor(step, step));
-  movingLeg.add(dirVector);
+  const movingLeg = tripod[tripod.steppingState.movingLegName];
+  movingLeg.add(tripod.steppingState.stepDelta);
   return States.MOVING;
 };
 
