@@ -2,7 +2,9 @@
   Canvas Drawing
  */
 
-export const create = (canvasElement) => {
+export const create = (window, canvasElement) => {
+  canvasElement.width = window.innerWidth;
+  canvasElement.height = window.innerHeight;
   return {
     element: canvasElement,
     context: canvasElement.getContext('2d')

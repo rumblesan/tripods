@@ -29,7 +29,7 @@ const init = () => {
   );
 
   const canvasEl = document.getElementById('canvas');
-  const canvas = Canvas.create(canvasEl);
+  const canvas = Canvas.create(window, canvasEl);
 
   const world = {
     canvas,
