@@ -1,6 +1,7 @@
 /* global describe, it */
 
 import * as Tripod from '../src/Tripod';
+import * as Brain from '../src/Tripod';
 import Victor from 'Victor';
 
 import assert from 'assert';

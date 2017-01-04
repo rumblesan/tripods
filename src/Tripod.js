@@ -3,24 +3,17 @@ import _ from 'underscore';
 import Victor from 'Victor';
 
 import * as StateMachine from './StateMachine';
-
-const States = {
-  THINKING: 'THINKING',
-  MOVING: 'MOVING',
-  GROWING: 'GROWING',
-  SHRINKING: 'SHRINKING'
-};
+import * as Brain from './TripodBrain';
 
 export const create = (leg1, leg2, leg3) => {
 
-  const stateMachine = StateMachine.create(_.values(States));
-  StateMachine.registerStateFunction(stateMachine, States.THINKING, think);
-  StateMachine.registerStateFunction(stateMachine, States.MOVING, move);
-  StateMachine.registerStateFunction(stateMachine, States.GROWING, grow);
-  StateMachine.registerStateFunction(stateMachine, States.SHRINKING, shrink);
-  StateMachine.registerTransitionFunction(stateMachine, States.THINKING, startThinking);
-  StateMachine.registerTransitionFunction(stateMachine, States.MOVING, startMoving);
-  StateMachine.registerTransitionFunction(stateMachine, States.GROWING, startGrowing);
+  const stateMachine = StateMachine.create(_.values(Brain.States));
+  StateMachine.registerStateFunction(stateMachine, Brain.States.THINKING, Brain.think);
+  StateMachine.registerStateFunction(stateMachine, Brain.States.MOVING, Brain.move);
+  StateMachine.registerStateFunction(stateMachine, Brain.States.GROWING, Brain.grow);
+  StateMachine.registerStateFunction(stateMachine, Brain.States.SHRINKING, Brain.shrink);
+  StateMachine.registerTransitionFunction(stateMachine, Brain.States.THINKING, Brain.startThinking);
+  StateMachine.registerTransitionFunction(stateMachine, Brain.States.MOVING, Brain.startMoving);
 
   const startArea = area({leg1, leg2, leg3});
   return {
@@ -44,6 +37,13 @@ export const getLeg = (tripod, name) => {
   return tripod[name];
 };
 
+export const farthestLeg = (tripod, target) => {
+  return _.max(
+    legs(tripod),
+    (leg) => leg.position.distance(target)
+  ).name;
+};
+
 export const centre = ({leg1, leg2, leg3}) => {
   return Victor(
     (leg1.x + leg2.x + leg3.x) / 3,
@@ -59,121 +59,6 @@ export const area = ({leg1, leg2, leg3}) => {
   ) / 2;
 };
 
-
-/**
-   Moving state functions
- */
-
-export const farthestLeg = (tripod, target) => {
-  return _.max(
-    legs(tripod),
-    (leg) => leg.position.distance(target)
-  ).name;
-};
-
-export const startMoving = (tripod) => {
-  if (tripod.target === null) {
-    return StateMachine.ERROR;
-  }
-  const movingLegName = farthestLeg(tripod, tripod.target);
-  const movingLeg = tripod[movingLegName];
-  const tC = centre(tripod);
-
-  const direction = tC.clone().subtract(movingLeg).normalize();
-  const moveDistance = movingLeg.distance(tC) * 4;
-  const legTarget = direction.clone().multiply(Victor(moveDistance, moveDistance)).add(movingLeg);
-
-  tripod.stateData = {
-    movingLegName: movingLegName,
-    target: legTarget,
-    stepsTaken: 0,
-    stepsInMovement: 10
-  };
-};
-
-export const move = (tripod) => {
-  const target = tripod.stateData.target;
-  const movingLeg = tripod[tripod.stateData.movingLegName];
-  tripod.stateData.stepsTaken += 1;
-  if (tripod.stateData.stepsTaken >= tripod.stateData.stepsInMovement) {
-    movingLeg.copy(target);
-    return States.THINKING;
-  }
-  // Steps still to take
-  const distance = target.distance(movingLeg);
-  const step = (distance / tripod.stateData.stepsInMovement);
-  const dirVector = target.clone().subtract(movingLeg).normalize().multiply(Victor(step, step));
-  movingLeg.add(dirVector);
-  return States.MOVING;
-};
-
-/**
-   Thinking state functions
- */
-
-export const startThinking = (tripod) => {
-  tripod.stateData = {};
-};
-
-export const think = (tripod) => {
-  if (tripod.target === null) {
-    return States.THINKING;
-  }
-  if (area(tripod) < (tripod.initialSize / 2)) {
-    return States.GROWING;
-  } else if (area(tripod) > (tripod.initialSize * 2)) {
-    return States.SHRINKING;
-  } else if (centre(tripod).distance(tripod.target) > 10) {
-    return States.MOVING;
-  } else {
-    tripod.target = null;
-    return States.THINKING;
-  }
-};
-
-/**
-   Growing state functions
- */
-
-export const startGrowing = (tripod) => {
-  tripod.stateData = {};
-};
-
-export const grow = (tripod) => {
-  const tC = centre(tripod);
-  const growLeg = _.min(
-    legs(tripod),
-    (leg) => leg.position.distance(tC)
-  ).name;
-  const growth = getLeg(growLeg, tripod).clone().subtract(tC).normalize().multiply(Victor(5, 5));
-  getLeg(growLeg, tripod).add(growth);
-  return States.THINKING;
-};
-
-/**
-   Shrinking state functions
- */
-
-export const startShrinking = (tripod) => {
-  tripod.stateData = {};
-};
-
-export const shrink = (tripod) => {
-  console.log('shrink');
-  const tC = centre(tripod);
-  const growLegName = _.max(
-    legs(tripod),
-    (leg) => leg.position.distance(tC)
-  ).name;
-  console.log('growLegName', growLegName);
-  const growLeg = getLeg(tripod, growLegName);
-  console.log('growLeg', growLeg);
-  const shrinkage = tC.clone().subtract(growLeg).normalize().multiply(Victor(5, 5));
-  console.log('shrinkage', shrinkage);
-  growLeg.add(shrinkage);
-  return States.THINKING;
-};
-
 /**
    Interaction functions
  */
@@ -184,5 +69,5 @@ export const live = (tripod) => {
 
 export const newTarget = (tripod, target) => {
   tripod.target = target;
-  StateMachine.change(tripod.stateMachine, States.MOVING, tripod);
+  StateMachine.change(tripod.stateMachine, Brain.States.MOVING, tripod);
 };
