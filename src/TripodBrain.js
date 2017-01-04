@@ -49,7 +49,6 @@ export const move = (tripod) => {
   const movingLeg = tripod[tripod.steppingState.movingLegName];
   tripod.steppingState.stepsTaken += 1;
   if (tripod.steppingState.stepsTaken >= tripod.steppingState.stepsInMovement) {
-    movingLeg.copy(target);
     return States.THINKING;
   }
   // Steps still to take
