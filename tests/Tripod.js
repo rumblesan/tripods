@@ -2,7 +2,7 @@
 
 import * as Tripod from '../src/Tripod';
 import * as Brain from '../src/Tripod';
-import Victor from 'Victor';
+import Victor from 'victor';
 
 import assert from 'assert';
 

@@ -1,6 +1,6 @@
 
 import _ from 'underscore';
-import Victor from 'Victor';
+import Victor from 'victor';
 
 import * as StateMachine from './StateMachine';
 import * as Brain from './TripodBrain';
