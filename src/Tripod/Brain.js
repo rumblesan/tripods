@@ -33,7 +33,7 @@ export const startMoving = ({tripod, world}) => {
   const tC = Body.centre(tripod.body);
   const closestFood = World.closestFood(world, tC);
 
-  const movingLegName = Body.farthestLeg(tripod.body, closestFood);
+  const movingLegName = Body.farthestLeg(tripod.body, closestFood.position);
   const movingLeg = Body.getLeg(tripod.body, movingLegName);
 
   const direction = tC.clone().subtract(movingLeg).normalize();
@@ -73,14 +73,13 @@ export const think = ({tripod, world}) => {
   }
   const tC = Body.centre(tripod.body);
   const closestFood = World.closestFood(world, tC);
-  console.log('closest food', closestFood);
   if (closestFood === null) {
     return States.THINKING;
   }
-  if (!Body.contains(tripod.body, closestFood)) {
+  if (!Body.contains(tripod.body, closestFood.position)) {
     return States.MOVING;
   } else {
-    World.eatFood(world, closestFood);
+    World.eatFood(world, closestFood.position);
     return States.THINKING;
   }
 };

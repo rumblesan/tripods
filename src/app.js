@@ -7,6 +7,7 @@ import './images/favicon.ico';
 import './style/style.css';
 
 import * as World from './World';
+import * as Food from './Food';
 import * as Canvas from './Canvas';
 import * as Tripod from './Tripod';
 
@@ -21,7 +22,7 @@ const drawTripod = (canvas, {body: {leg1, leg2, leg3}}) => {
 };
 
 const drawFood = (canvas, food) => {
-  Canvas.drawSquare(canvas, food, 10, 'red');
+  Canvas.drawSquare(canvas, food.position, 10, 'red');
 };
 
 const randomTripod = (canvas, size) => {
@@ -55,7 +56,7 @@ const randomFood = (canvas) => {
     Math.round(Math.random() * canvas.element.width),
     Math.round(Math.random() * canvas.element.height)
   );
-  return position;
+  return Food.create(position);
 };
 
 const init = () => {
@@ -91,8 +92,8 @@ const draw = (canvas, world) => {
 };
 
 const onClick = (e, world) => {
-  const food = Victor(e.clientX, e.clientY);
-  World.addFood(world, food);
+  const position = Victor(e.clientX, e.clientY);
+  World.addFood(world, Food.create(position));
 };
 
 init();
