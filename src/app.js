@@ -23,17 +23,40 @@ const drawTarget = (canvas, target) => {
   Canvas.drawSquare(canvas, target, 10, 'red');
 };
 
+const randomTripod = (canvasWidth, canvasHeight, size) => {
+  const position = Victor(
+    Math.round(Math.random() * canvasWidth),
+    Math.round(Math.random() * canvasHeight)
+  );
+  const angle1 = Math.random() * 2 * Math.PI;
+  const angle2 = (angle1 + (2 * Math.PI / 3));
+  const angle3 = (angle2 + (2 * Math.PI / 3));
+
+  const p1 = Victor(
+    position.x + (Math.sin(angle1) * size),
+    position.y + (Math.cos(angle1) * size)
+  );
+  const p2 = Victor(
+    position.x + (Math.sin(angle2) * size),
+    position.y + (Math.cos(angle2) * size)
+  );
+  const p3 = Victor(
+    position.x + (Math.sin(angle3) * size),
+    position.y + (Math.cos(angle3) * size)
+  );
+  return Tripod.create(
+    p1, p2, p3
+  );
+};
+
 const init = () => {
   console.log('init');
 
-  const tripod = Tripod.create(
-    Victor(100, 130),
-    Victor(90, 80),
-    Victor(80, 110),
-  );
 
   const canvasEl = document.getElementById('canvas');
   const canvas = Canvas.create(window, canvasEl);
+
+  const tripod = randomTripod(canvasEl.width, canvasEl.height, 25);
 
   const world = {
     canvas,
