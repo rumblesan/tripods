@@ -7,25 +7,34 @@ import assert from 'assert';
 
 describe('Tripod Body', () => {
 
-  it('retrieves the legs', () => {
-    const l1 = Victor(1, 1);
-    const l2 = Victor(1, 4);
-    const l3 = Victor(4, 1);
-    const body = Body.create(l1, l2, l3);
-    const result = Body.legs(body);
+  it('can be created', () => {
+    const leg1 = Victor(0, 0);
+    const leg2 = Victor(0, 3);
+    const leg3 = Victor(3, 0);
+    const body = Body.create(leg1, leg2, leg3);
 
-    assert.equal(result[0].position.x, l1.x, `Leg1 X value should be ${l1.x}, not ${result[0].position.x}`);
-    assert.equal(result[0].position.y, l1.y, `Leg1 Y value should be ${l1.y}, not ${result[0].position.y}`);
-    assert.equal(result[0].name, 'leg1', `Leg1 name should be 'leg1', not ${result[0].name}`);
+    assert.equal(body.leg1.x, leg1.x, `Leg 1 X value should be ${leg1.x}, not ${body.leg1.x}`);
+    assert.equal(body.leg1.y, leg1.y, `Leg 1 Y value should be ${leg1.y}, not ${body.leg1.y}`);
 
-    assert.equal(result[1].position.x, l2.x, `Leg2 X value should be ${l2.x}, not ${result[1].position.x}`);
-    assert.equal(result[1].position.y, l2.y, `Leg2 Y value should be ${l2.y}, not ${result[1].position.y}`);
-    assert.equal(result[1].name, 'leg2', `Leg2 name should be 'leg2', not ${result[1].name}`);
+    assert.equal(body.leg2.x, leg2.x, `Leg 2 X value should be ${leg2.x}, not ${body.leg2.x}`);
+    assert.equal(body.leg2.y, leg2.y, `Leg 2 Y value should be ${leg2.y}, not ${body.leg2.y}`);
 
-    assert.equal(result[2].position.x, l3.x, `Leg3 X value should be ${l3.x}, not ${result[2].position.x}`);
-    assert.equal(result[2].position.y, l3.y, `Leg3 Y value should be ${l3.y}, not ${result[2].position.y}`);
-    assert.equal(result[2].name, 'leg3', `Leg3 name should be 'leg3', not ${result[2].name}`);
+    assert.equal(body.leg3.x, leg3.x, `Leg 3 X value should be ${leg3.x}, not ${body.leg3.x}`);
+    assert.equal(body.leg3.y, leg3.y, `Leg 3 Y value should be ${leg3.y}, not ${body.leg3.y}`);
+  });
 
+  it('calculates the farthest leg from a point', () => {
+    const body = Body.create(
+      Victor(0, 0),
+      Victor(0, 3),
+      Victor(3, 0)
+    );
+    const target = Victor(3, 3);
+    const expected = body.leg1;
+    const result = Body.farthestLeg(body, target);
+
+    assert.equal(result.x, expected.x, `Farthest leg X value should be ${expected.x}, not ${result.x}`);
+    assert.equal(result.y, expected.y, `Farthest leg Y value should be ${expected.y}, not ${result.y}`);
   });
 
   it('finds the centre', () => {
@@ -51,20 +60,6 @@ describe('Tripod Body', () => {
     const result = Body.area(body);
 
     assert.equal(result, expected, `Area should be ${expected}, not ${result}`);
-  });
-
-  it('calculates the leg to move', () => {
-    const body = Body.create(
-      Victor(0, 0),
-      Victor(0, 3),
-      Victor(3, 0)
-    );
-    const target = Victor(3, 3);
-    const expected = body.leg1;
-    const result = Body.farthestLeg(body, target);
-
-    assert.equal(result.x, expected.x, `Farthest leg X value should be ${expected.x}, not ${result.x}`);
-    assert.equal(result.y, expected.y, `Farthest leg Y value should be ${expected.y}, not ${result.y}`);
   });
 
   it('correctly finds if a point is inside the tripod base', () => {

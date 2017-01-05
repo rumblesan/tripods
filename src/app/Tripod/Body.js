@@ -12,18 +12,6 @@ export const create = (leg1, leg2, leg3) => {
   };
 };
 
-export const legs = ({leg1, leg2, leg3}) => {
-  return [
-    {name: 'leg1', position: leg1},
-    {name: 'leg2', position: leg2},
-    {name: 'leg3', position: leg3},
-  ];
-};
-
-export const getLeg = (tripod, name) => {
-  return tripod[name];
-};
-
 export const farthestLeg = ({leg1, leg2, leg3}, target) => {
   return _.max(
     [leg1, leg2, leg3],
