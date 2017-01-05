@@ -1,9 +1,6 @@
 
-import _ from 'underscore';
-import Victor from 'victor';
-
-import * as Brain from './Tripod/Brain';
-import * as Body from './Tripod/Body';
+import * as Brain from './Brain';
+import * as Body from './Body';
 
 export const create = (leg1, leg2, leg3) => {
 
