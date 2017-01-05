@@ -60,10 +60,11 @@ describe('Tripod Body', () => {
       Victor(3, 0)
     );
     const target = Victor(3, 3);
-    const expected = 'leg1';
+    const expected = body.leg1;
     const result = Body.farthestLeg(body, target);
 
-    assert.equal(result, expected, `Farthest leg should be ${expected}, not ${result}`);
+    assert.equal(result.x, expected.x, `Farthest leg X value should be ${expected.x}, not ${result.x}`);
+    assert.equal(result.y, expected.y, `Farthest leg Y value should be ${expected.y}, not ${result.y}`);
   });
 
   it('correctly finds if a point is inside the tripod base', () => {

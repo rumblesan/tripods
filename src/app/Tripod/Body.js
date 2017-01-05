@@ -24,11 +24,11 @@ export const getLeg = (tripod, name) => {
   return tripod[name];
 };
 
-export const farthestLeg = (tripod, target) => {
+export const farthestLeg = ({leg1, leg2, leg3}, target) => {
   return _.max(
-    legs(tripod),
-    (leg) => leg.position.distance(target)
-  ).name;
+    [leg1, leg2, leg3],
+    (leg) => leg.distance(target)
+  );
 };
 
 export const centre = ({leg1, leg2, leg3}) => {

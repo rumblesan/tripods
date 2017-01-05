@@ -14,6 +14,7 @@ import * as World from '../World';
 /**
    States that a Tripod can be in
  */
+
 export const States = {
   THINKING: 'THINKING',
   MOVING: 'MOVING',
@@ -33,30 +34,29 @@ export const startMoving = ({tripod, world}) => {
   const tC = Body.centre(tripod.body);
   const closestFood = World.closestFood(world, tC);
 
-  const movingLegName = Body.farthestLeg(tripod.body, closestFood.position);
-  const movingLeg = Body.getLeg(tripod.body, movingLegName);
+  const steppingLeg = Body.farthestLeg(tripod.body, closestFood.position);
 
-  const direction = tC.clone().subtract(movingLeg).normalize();
-  const moveDistance = movingLeg.distance(tC) * 4;
+  const direction = tC.clone().subtract(steppingLeg).normalize();
+  const moveDistance = steppingLeg.distance(tC) * 4;
 
   const stepDistance = moveDistance / tripod.config.moveSteps;
   const stepDelta = direction.multiply(Victor(stepDistance, stepDistance));
 
   tripod.steppingState = {
-    movingLegName: movingLegName,
+    steppingLeg,
     stepDelta,
-    stepsTaken: tripod.config.moveSteps
+    stepsRemaining: tripod.config.moveSteps
   };
 };
 
 export const move = ({tripod}) => {
-  tripod.steppingState.stepsTaken -= 1;
-  if (tripod.steppingState.stepsTaken <= 0) {
+  tripod.steppingState.stepsRemaining -= 1;
+  if (tripod.steppingState.stepsRemaining <= 0) {
     tripod.steppingState = {};
     return States.THINKING;
   }
-  const movingLeg = Body.getLeg(tripod.body, tripod.steppingState.movingLegName);
-  movingLeg.add(tripod.steppingState.stepDelta);
+  const steppingLeg = tripod.steppingState.steppingLeg;
+  steppingLeg.add(tripod.steppingState.stepDelta);
   return States.MOVING;
 };
 
@@ -90,12 +90,9 @@ export const think = ({tripod, world}) => {
 
 export const grow = ({tripod}) => {
   const tC = Body.centre(tripod.body);
-  const growLeg = _.min(
-    Body.legs(tripod.body),
-    (leg) => leg.position.distance(tC)
-  ).name;
-  const growth = Body.getLeg(tripod.body, growLeg).clone().subtract(tC).normalize().multiply(Victor(5, 5));
-  Body.getLeg(tripod.body, growLeg).add(growth);
+  const growLeg = Body.farthestLeg(tripod.body, tC);
+  const growth = growLeg.clone().subtract(tC).normalize().multiply(Victor(5, 5));
+  growLeg.add(growth);
   return States.THINKING;
 };
 
@@ -105,13 +102,9 @@ export const grow = ({tripod}) => {
 
 export const shrink = ({tripod}) => {
   const tC = Body.centre(tripod.body);
-  const growLegName = _.max(
-    Body.legs(tripod.body),
-    (leg) => leg.position.distance(tC)
-  ).name;
-  const growLeg = Body.getLeg(tripod.body, growLegName);
-  const shrinkage = tC.clone().subtract(growLeg).normalize().multiply(Victor(5, 5));
-  growLeg.add(shrinkage);
+  const shrinkLeg = Body.farthestLeg(tripod.body, tC);
+  const shrinkage = tC.clone().subtract(shrinkLeg).normalize().multiply(Victor(5, 5));
+  shrinkLeg.add(shrinkage);
   return States.THINKING;
 };
 
