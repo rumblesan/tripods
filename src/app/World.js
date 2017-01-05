@@ -18,12 +18,10 @@ export const addTripod = (world, tripod) => {
 export const addFood = (world, food) => {
   const uID = _.uniqueId('food');
   food.uID = uID;
-  console.log('adding food', food);
   world.food[uID] = food;
 };
 
 export const eatFood = (world, food) => {
-  console.log('eating food', food);
   if (world.food[food.uID]) {
     delete(world.food[food.uID]);
   }
