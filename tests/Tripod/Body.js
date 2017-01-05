@@ -1,6 +1,6 @@
 /* global describe, it */
 
-import * as Body from '../../src/Tripod/Body';
+import * as Body from '../../src/app/Tripod/Body';
 import Victor from 'victor';
 
 import assert from 'assert';

@@ -6,10 +6,10 @@ import './index.html';
 import './images/favicon.ico';
 import './style/style.css';
 
-import * as World from './World';
-import * as Food from './Food';
-import * as Canvas from './Canvas';
-import * as Tripod from './Tripod';
+import * as World from './app/World';
+import * as Food from './app/Food';
+import * as Canvas from './app/Canvas';
+import * as Tripod from './app/Tripod';
 
 const drawTripod = (canvas, {body: {leg1, leg2, leg3}}) => {
   Canvas.drawSquare(canvas, leg1, 10, 'white');

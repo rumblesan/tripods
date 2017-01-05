@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 
-import * as StateMachine from '../src/StateMachine';
+import * as StateMachine from '../src/app/StateMachine';
 
 import assert from 'assert';
 
