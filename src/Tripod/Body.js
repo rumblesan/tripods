@@ -7,7 +7,8 @@ import Victor from 'victor';
 
 export const create = (leg1, leg2, leg3) => {
   return {
-    leg1, leg2, leg3
+    leg1, leg2, leg3,
+    initialSize: area({leg1, leg2, leg3})
   };
 };
 

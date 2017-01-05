@@ -7,10 +7,8 @@ export const create = (leg1, leg2, leg3) => {
   const brain = Brain.create();
   const body = Body.create(leg1, leg2, leg3);
 
-  const startArea = Body.area({leg1, leg2, leg3});
   return {
     body,
-    initialSize: startArea,
     config: {
       moveSteps: 10
     },
