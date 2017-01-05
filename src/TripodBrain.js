@@ -109,3 +109,21 @@ export const shrink = (tripod) => {
   growLeg.add(shrinkage);
   return States.THINKING;
 };
+
+/**
+   Brain functions
+ */
+
+export const create = () => {
+  const brain = StateMachine.create(_.values(States));
+  StateMachine.registerStateFunction(brain, States.THINKING, think);
+  StateMachine.registerStateFunction(brain, States.MOVING, move);
+  StateMachine.registerStateFunction(brain, States.GROWING, grow);
+  StateMachine.registerStateFunction(brain, States.SHRINKING, shrink);
+  StateMachine.registerTransitionFunction(brain, States.MOVING, startMoving);
+  return brain;
+};
+
+export const cogitate = (tripod) => {
+  StateMachine.run(tripod.brain, tripod);
+};

@@ -2,17 +2,11 @@
 import _ from 'underscore';
 import Victor from 'victor';
 
-import * as StateMachine from './StateMachine';
 import * as Brain from './TripodBrain';
 
 export const create = (leg1, leg2, leg3) => {
 
-  const stateMachine = StateMachine.create(_.values(Brain.States));
-  StateMachine.registerStateFunction(stateMachine, Brain.States.THINKING, Brain.think);
-  StateMachine.registerStateFunction(stateMachine, Brain.States.MOVING, Brain.move);
-  StateMachine.registerStateFunction(stateMachine, Brain.States.GROWING, Brain.grow);
-  StateMachine.registerStateFunction(stateMachine, Brain.States.SHRINKING, Brain.shrink);
-  StateMachine.registerTransitionFunction(stateMachine, Brain.States.MOVING, Brain.startMoving);
+  const brain = Brain.create();
 
   const startArea = area({leg1, leg2, leg3});
   return {
@@ -24,7 +18,7 @@ export const create = (leg1, leg2, leg3) => {
     steppingState: {},
     target: null,
     targetReached: null,
-    stateMachine
+    brain
   };
 };
 
@@ -86,11 +80,10 @@ export const contains = ({leg1, leg2, leg3}, point) => {
  */
 
 export const live = (tripod) => {
-  StateMachine.run(tripod.stateMachine, tripod);
+  Brain.cogitate(tripod);
 };
 
 export const newTarget = (tripod, target, callback) => {
   tripod.target = target;
   tripod.targetReached = callback;
-  StateMachine.change(tripod.stateMachine, Brain.States.MOVING, tripod);
 };
