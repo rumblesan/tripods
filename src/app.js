@@ -24,10 +24,10 @@ const drawFood = (canvas, food) => {
   Canvas.drawSquare(canvas, food, 10, 'red');
 };
 
-const randomTripod = (canvasWidth, canvasHeight, size) => {
+const randomTripod = (canvas, size) => {
   const position = Victor(
-    Math.round(Math.random() * canvasWidth),
-    Math.round(Math.random() * canvasHeight)
+    Math.round(Math.random() * canvas.element.width),
+    Math.round(Math.random() * canvas.element.height)
   );
   const angle1 = Math.random() * 2 * Math.PI;
   const angle2 = (angle1 + (2 * Math.PI / 3));
@@ -50,26 +50,24 @@ const randomTripod = (canvasWidth, canvasHeight, size) => {
   );
 };
 
+const randomFood = (canvas) => {
+  const position = Victor(
+    Math.round(Math.random() * canvas.element.width),
+    Math.round(Math.random() * canvas.element.height)
+  );
+  return position;
+};
+
 const init = () => {
   const canvasEl = document.getElementById('canvas');
   const canvas = Canvas.create(window, canvasEl);
 
   const world = World.create();
-  World.addTripod(world,
-    randomTripod(canvasEl.width, canvasEl.height, 25)
-  );
-  World.addTripod(world,
-    randomTripod(canvasEl.width, canvasEl.height, 25)
-  );
-  World.addTripod(world,
-    randomTripod(canvasEl.width, canvasEl.height, 25)
-  );
-  World.addTripod(world,
-    randomTripod(canvasEl.width, canvasEl.height, 25)
-  );
-  World.addTripod(world,
-    randomTripod(canvasEl.width, canvasEl.height, 25)
-  );
+  World.addTripod(world, randomTripod(canvas, 25));
+  World.addTripod(world, randomTripod(canvas, 25));
+  World.addTripod(world, randomTripod(canvas, 25));
+  World.addTripod(world, randomTripod(canvas, 25));
+  World.addTripod(world, randomTripod(canvas, 25));
   canvasEl.onclick = (e) => {
     onClick(e, world);
   };
@@ -82,6 +80,12 @@ const draw = (canvas, world) => {
   _.each(world.tripods, (t) => Tripod.live(t, world));
   _.each(world.tripods, (t) => drawTripod(canvas, t));
   _.each(world.food, (f) => drawFood(canvas, f));
+  if (world.food.length < 20) {
+    const diff = 25 - world.food.length;
+    for (let i = 0; i < diff; i += 1) {
+      World.addFood(world, randomFood(canvas));
+    }
+  }
 
   requestAnimationFrame(() => draw(canvas, world));
 };
