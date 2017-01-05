@@ -29,9 +29,9 @@ export const startMoving = (tripod) => {
     return StateMachine.ERROR;
   }
 
-  const movingLegName = Tripod.farthestLeg(tripod, tripod.target);
-  const movingLeg = tripod[movingLegName];
-  const tC = Tripod.centre(tripod);
+  const movingLegName = Tripod.farthestLeg(tripod.body, tripod.target);
+  const movingLeg = Tripod.getLeg(tripod.body, movingLegName);
+  const tC = Tripod.centre(tripod.body);
 
   const direction = tC.clone().subtract(movingLeg).normalize();
   const moveDistance = movingLeg.distance(tC) * 4;
@@ -52,7 +52,7 @@ export const move = (tripod) => {
     tripod.steppingState = {};
     return States.THINKING;
   }
-  const movingLeg = tripod[tripod.steppingState.movingLegName];
+  const movingLeg = Tripod.getLeg(tripod.body, tripod.steppingState.movingLegName);
   movingLeg.add(tripod.steppingState.stepDelta);
   return States.MOVING;
 };
@@ -65,11 +65,11 @@ export const think = (tripod) => {
   if (tripod.target === null) {
     return States.THINKING;
   }
-  if (Tripod.area(tripod) < (tripod.initialSize / 2)) {
+  if (Tripod.area(tripod.body) < (tripod.initialSize / 2)) {
     return States.GROWING;
-  } else if (Tripod.area(tripod) > (tripod.initialSize * 2)) {
+  } else if (Tripod.area(tripod.body) > (tripod.initialSize * 2)) {
     return States.SHRINKING;
-  } else if (!Tripod.contains(tripod, tripod.target)) {
+  } else if (!Tripod.contains(tripod.body, tripod.target)) {
     return States.MOVING;
   } else {
     tripod.targetReached();
@@ -84,13 +84,13 @@ export const think = (tripod) => {
  */
 
 export const grow = (tripod) => {
-  const tC = Tripod.centre(tripod);
+  const tC = Tripod.centre(tripod.body);
   const growLeg = _.min(
-    Tripod.legs(tripod),
+    Tripod.legs(tripod.body),
     (leg) => leg.position.distance(tC)
   ).name;
-  const growth = Tripod.getLeg(tripod, growLeg).clone().subtract(tC).normalize().multiply(Victor(5, 5));
-  Tripod.getLeg(tripod, growLeg).add(growth);
+  const growth = Tripod.getLeg(tripod.body, growLeg).clone().subtract(tC).normalize().multiply(Victor(5, 5));
+  Tripod.getLeg(tripod.body, growLeg).add(growth);
   return States.THINKING;
 };
 
@@ -99,12 +99,12 @@ export const grow = (tripod) => {
  */
 
 export const shrink = (tripod) => {
-  const tC = Tripod.centre(tripod);
+  const tC = Tripod.centre(tripod.body);
   const growLegName = _.max(
-    Tripod.legs(tripod),
+    Tripod.legs(tripod.body),
     (leg) => leg.position.distance(tC)
   ).name;
-  const growLeg = Tripod.getLeg(tripod, growLegName);
+  const growLeg = Tripod.getLeg(tripod.body, growLegName);
   const shrinkage = tC.clone().subtract(growLeg).normalize().multiply(Victor(5, 5));
   growLeg.add(shrinkage);
   return States.THINKING;

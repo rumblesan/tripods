@@ -10,7 +10,9 @@ export const create = (leg1, leg2, leg3) => {
 
   const startArea = area({leg1, leg2, leg3});
   return {
-    leg1, leg2, leg3,
+    body: {
+      leg1, leg2, leg3,
+    },
     initialSize: startArea,
     config: {
       moveSteps: 10

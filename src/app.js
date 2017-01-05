@@ -9,7 +9,7 @@ import './style/style.css';
 import * as Canvas from './Canvas';
 import * as Tripod from './Tripod';
 
-const drawTripod = (canvas, {leg1, leg2, leg3}) => {
+const drawTripod = (canvas, {body: {leg1, leg2, leg3}}) => {
   Canvas.drawSquare(canvas, leg1, 10, 'white');
   Canvas.drawSquare(canvas, leg2, 10, 'white');
   Canvas.drawSquare(canvas, leg3, 10, 'white');
