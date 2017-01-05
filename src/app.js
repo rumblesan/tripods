@@ -81,8 +81,9 @@ const draw = (canvas, world) => {
   _.each(world.tripods, (t) => Tripod.live(t, world));
   _.each(world.tripods, (t) => drawTripod(canvas, t));
   _.each(world.food, (f) => drawFood(canvas, f));
-  if (world.food.length < 20) {
-    const diff = 25 - world.food.length;
+  const foodNum = _.size(world.food);
+  if (foodNum < 20) {
+    const diff = 25 - foodNum;
     for (let i = 0; i < diff; i += 1) {
       World.addFood(world, randomFood(canvas));
     }

@@ -79,7 +79,7 @@ export const think = ({tripod, world}) => {
   if (!Body.contains(tripod.body, closestFood.position)) {
     return States.MOVING;
   } else {
-    World.eatFood(world, closestFood.position);
+    World.eatFood(world, closestFood);
     return States.THINKING;
   }
 };
