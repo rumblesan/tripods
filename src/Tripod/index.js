@@ -3,19 +3,13 @@ import * as Brain from './Brain';
 import * as Body from './Body';
 
 export const create = (leg1, leg2, leg3) => {
-
-  const brain = Brain.create();
-  const body = Body.create(leg1, leg2, leg3);
-
   return {
-    body,
+    body: Body.create(leg1, leg2, leg3),
     config: {
       moveSteps: 10
     },
     steppingState: {},
-    target: null,
-    targetReached: null,
-    brain
+    brain: Brain.create()
   };
 };
 
@@ -23,8 +17,8 @@ export const create = (leg1, leg2, leg3) => {
    Interaction functions
  */
 
-export const live = (tripod) => {
-  Brain.cogitate(tripod);
+export const live = (tripod, world) => {
+  Brain.cogitate(tripod, world);
 };
 
 export const newTarget = (tripod, target, callback) => {

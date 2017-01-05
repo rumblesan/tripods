@@ -6,6 +6,7 @@ import './index.html';
 import './images/favicon.ico';
 import './style/style.css';
 
+import * as World from './World';
 import * as Canvas from './Canvas';
 import * as Tripod from './Tripod';
 
@@ -19,8 +20,8 @@ const drawTripod = (canvas, {body: {leg1, leg2, leg3}}) => {
   Canvas.drawLine(canvas, leg3, leg1, 'white');
 };
 
-const drawTarget = (canvas, target) => {
-  Canvas.drawSquare(canvas, target, 10, 'red');
+const drawFood = (canvas, food) => {
+  Canvas.drawSquare(canvas, food, 10, 'red');
 };
 
 const randomTripod = (canvasWidth, canvasHeight, size) => {
@@ -50,43 +51,44 @@ const randomTripod = (canvasWidth, canvasHeight, size) => {
 };
 
 const init = () => {
-  console.log('init');
-
-
   const canvasEl = document.getElementById('canvas');
   const canvas = Canvas.create(window, canvasEl);
 
-  const tripod = randomTripod(canvasEl.width, canvasEl.height, 25);
-
-  const world = {
-    canvas,
-    tripod,
-    target: null
-  };
-
+  const world = World.create();
+  World.addTripod(world,
+    randomTripod(canvasEl.width, canvasEl.height, 25)
+  );
+  World.addTripod(world,
+    randomTripod(canvasEl.width, canvasEl.height, 25)
+  );
+  World.addTripod(world,
+    randomTripod(canvasEl.width, canvasEl.height, 25)
+  );
+  World.addTripod(world,
+    randomTripod(canvasEl.width, canvasEl.height, 25)
+  );
+  World.addTripod(world,
+    randomTripod(canvasEl.width, canvasEl.height, 25)
+  );
   canvasEl.onclick = (e) => {
     onClick(e, world);
   };
 
-  requestAnimationFrame(() => draw(world));
+  requestAnimationFrame(() => draw(canvas, world));
 };
 
-const draw = (world) => {
-  Tripod.live(world.tripod);
-  Canvas.drawBackground(world.canvas, 'black');
-  if (world.target) {
-    drawTarget(world.canvas, world.target);
-  }
-  drawTripod(world.canvas, world.tripod);
+const draw = (canvas, world) => {
+  Canvas.drawBackground(canvas, 'black');
+  _.each(world.tripods, (t) => Tripod.live(t, world));
+  _.each(world.tripods, (t) => drawTripod(canvas, t));
+  _.each(world.food, (f) => drawFood(canvas, f));
 
-  requestAnimationFrame(() => draw(world));
+  requestAnimationFrame(() => draw(canvas, world));
 };
 
 const onClick = (e, world) => {
-  world.target = Victor(e.clientX, e.clientY);
-  Tripod.newTarget(world.tripod, world.target, () => {
-    world.target = null;
-  });
+  const food = Victor(e.clientX, e.clientY);
+  World.addFood(world, food);
 };
 
 init();

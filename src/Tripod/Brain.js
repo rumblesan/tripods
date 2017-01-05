@@ -9,6 +9,7 @@ import Victor from 'victor';
 
 import * as Body from './Body';
 import * as StateMachine from '../StateMachine';
+import * as World from '../World';
 
 /**
    States that a Tripod can be in
@@ -24,14 +25,16 @@ export const States = {
    Moving state functions
  */
 
-export const startMoving = (tripod) => {
+export const startMoving = ({tripod, world}) => {
   if (tripod.target === null) {
     return StateMachine.ERROR;
   }
 
-  const movingLegName = Body.farthestLeg(tripod.body, tripod.target);
-  const movingLeg = Body.getLeg(tripod.body, movingLegName);
   const tC = Body.centre(tripod.body);
+  const closestFood = World.closestFood(world, tC);
+
+  const movingLegName = Body.farthestLeg(tripod.body, closestFood);
+  const movingLeg = Body.getLeg(tripod.body, movingLegName);
 
   const direction = tC.clone().subtract(movingLeg).normalize();
   const moveDistance = movingLeg.distance(tC) * 4;
@@ -46,7 +49,7 @@ export const startMoving = (tripod) => {
   };
 };
 
-export const move = (tripod) => {
+export const move = ({tripod}) => {
   tripod.steppingState.stepsTaken -= 1;
   if (tripod.steppingState.stepsTaken <= 0) {
     tripod.steppingState = {};
@@ -61,20 +64,23 @@ export const move = (tripod) => {
    Thinking state functions
  */
 
-export const think = (tripod) => {
-  if (tripod.target === null) {
-    return States.THINKING;
-  }
+export const think = ({tripod, world}) => {
   if (Body.area(tripod.body) < (tripod.body.initialSize / 2)) {
     return States.GROWING;
-  } else if (Body.area(tripod.body) > (tripod.body.initialSize * 2)) {
+  }
+  if (Body.area(tripod.body) > (tripod.body.initialSize * 2)) {
     return States.SHRINKING;
-  } else if (!Body.contains(tripod.body, tripod.target)) {
+  }
+  const tC = Body.centre(tripod.body);
+  const closestFood = World.closestFood(world, tC);
+  console.log('closest food', closestFood);
+  if (closestFood === null) {
+    return States.THINKING;
+  }
+  if (!Body.contains(tripod.body, closestFood)) {
     return States.MOVING;
   } else {
-    tripod.targetReached();
-    tripod.targetReached = null;
-    tripod.target = null;
+    World.eatFood(world, closestFood);
     return States.THINKING;
   }
 };
@@ -83,7 +89,7 @@ export const think = (tripod) => {
    Growing state functions
  */
 
-export const grow = (tripod) => {
+export const grow = ({tripod}) => {
   const tC = Body.centre(tripod.body);
   const growLeg = _.min(
     Body.legs(tripod.body),
@@ -98,7 +104,7 @@ export const grow = (tripod) => {
    Shrinking state functions
  */
 
-export const shrink = (tripod) => {
+export const shrink = ({tripod}) => {
   const tC = Body.centre(tripod.body);
   const growLegName = _.max(
     Body.legs(tripod.body),
@@ -124,6 +130,6 @@ export const create = () => {
   return brain;
 };
 
-export const cogitate = (tripod) => {
-  StateMachine.run(tripod.brain, tripod);
+export const cogitate = (tripod, world) => {
+  StateMachine.run(tripod.brain, {tripod, world});
 };
