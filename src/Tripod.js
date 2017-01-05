@@ -2,7 +2,7 @@
 import _ from 'underscore';
 import Victor from 'victor';
 
-import * as Brain from './TripodBrain';
+import * as Brain from './Tripod/Brain';
 
 export const create = (leg1, leg2, leg3) => {
 

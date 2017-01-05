@@ -7,8 +7,8 @@
 import _ from 'underscore';
 import Victor from 'victor';
 
-import * as Tripod from './Tripod';
-import * as StateMachine from './StateMachine';
+import * as Tripod from '../Tripod';
+import * as StateMachine from '../StateMachine';
 
 /**
    States that a Tripod can be in
