@@ -1,13 +1,10 @@
 # Tripods
 
-An experiment
+A web visualisation experiment that puts happy, little, walking tripods in your browser.
 
+Currently they just walk around and try to eat the nearest piece of food. Not really any other logic beyond that.
 
-## Description
-
-A web visualisation that puts little walking tripods in your browser.
-
-Currently just the one while I work on the movement. Click the screen to set a target and watch it walk over to it.
+Food will be randomly added to the world, but clicking will add more at the point clicked.
 
 
 ## Contact
